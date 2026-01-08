@@ -12,7 +12,6 @@ const api = axios.create({
   },
 });
 
-// Add request interceptor to attach token to requests
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("auth_token");
   if (token) {
@@ -29,7 +28,6 @@ export const signUp = async (data: SignUpData): Promise<AuthResponse> => {
 export const logIn = async (data: LogInData): Promise<AuthResponse> => {
   const response = await api.post<AuthResponse>("/Auth/login", data);
 
-  // Store token and user in localStorage
   if (response.data.token) {
     localStorage.setItem("auth_token", response.data.token);
     localStorage.setItem("user", JSON.stringify(response.data.user));
