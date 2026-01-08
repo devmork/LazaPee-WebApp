@@ -2,26 +2,26 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-interface SignUpProps {
-  onSuccess?: () => void;
-}
-
-const SignUp = ({ onSuccess }: SignUpProps) => {
+function SignUp() {
   const [formData, setFormData] = useState({
     username: "",
     email: "",
     password: "",
   });
+  const navigate = useNavigate();
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Sign up:", formData);
-    onSuccess?.();
+    // After successful signup, redirect to login
+    navigate("/login");
   };
 
   return (
-    <>
-      <div className="space-y-6">
+    <div className="max-w-md mx-auto mt-10">
+      <div className="space-y-6 bg-white p-8 rounded-lg shadow">
         <div className="space-y-2 text-center">
           <h2 className="text-2xl font-bold">Create Account</h2>
           <p className="text-gray-500">Sign up to get started with LazaPee</p>
@@ -75,8 +75,8 @@ const SignUp = ({ onSuccess }: SignUpProps) => {
           </Button>
         </form>
       </div>
-    </>
+    </div>
   );
-};
+}
 
 export default SignUp;

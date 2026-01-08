@@ -2,25 +2,25 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-interface LogInProps {
-  onSuccess?: () => void;
-}
-
-const LogIn = ({ onSuccess }: LogInProps) => {
+function LogIn() {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+  const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Log in:", formData);
-    onSuccess?.();
+    // After successful login, redirect to home
+    navigate("/");
   };
+
   return (
-    <>
-      <div className="space-y-6">
+    <div className="max-w-md mx-auto mt-10">
+      <div className="space-y-6 bg-white p-8 rounded-lg shadow">
         <div className="space-y-2 text-center">
           <h2 className="text-2xl font-bold">Welcome Back</h2>
           <p className="text-gray-500">Log in to your LazaPee account</p>
@@ -60,8 +60,8 @@ const LogIn = ({ onSuccess }: LogInProps) => {
           </Button>
         </form>
       </div>
-    </>
+    </div>
   );
-};
+}
 
 export default LogIn;
