@@ -23,30 +23,30 @@ api.interceptors.request.use((config) => {
 
 //Getting seller profile
 export const getSellerProfile = async (): Promise<Seller> => {
-    const response = await api.get<Seller>("/Seller/profile");
+    const response = await api.get<Seller>("/Seller/my-seller-profile");
     return response.data;
 }
 
 //Create seller profile
 export const createSellerProfile = async (data: CreateSeller): Promise<Seller> => {
-    const response = await api.post<Seller>("/Seller/profile", data);
+    const response = await api.post<Seller>("/Seller/create-seller", data);
     return response.data;
 }
 
 //Update seller profile
 export const updateSellerProfile = async (data: UpdateSeller): Promise<Seller> => {
-    const response = await api.put<Seller>("/Seller/profile", data);
+    const response = await api.put<Seller>("/Seller/update-seller-profile", data);
     return response.data;
 }
 
 //Get Seller by ID
-export const getSellerById = async (sellerId: number): Promise<Seller> => {
-    const response = await api.get<Seller>(`/Seller/${sellerId}`);
+export const getSellerById = async (_sellerId: number): Promise<Seller> => {
+    const response = await api.get<Seller>(`/Seller/seller-id/{sellerId:int}`);
     return response.data;
 }
 
 //Delete Seller Profile
 export const deleteSellerProfile = async (): Promise<void> => {
-    await api.delete("/Seller/profile");
+    await api.delete("/Seller/delete-my-seller-profile");
 }
 

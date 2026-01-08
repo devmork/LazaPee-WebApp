@@ -78,11 +78,13 @@ function Layout() {
               {authenticated ? (
                 <>
                   {/* Start Selling Button */}
-                  <Button
-                    variant="ghost"
-                    className="text-white hover:text-blue-100 hover:bg-blue-700">
-                    Start Selling
-                  </Button>
+                  <Link to="/start-selling">
+                    <Button
+                      variant="ghost"
+                      className="text-white hover:text-blue-100 hover:bg-blue-700">
+                      Start Selling
+                    </Button>
+                  </Link>
 
                   {/* Cart */}
                   <Button

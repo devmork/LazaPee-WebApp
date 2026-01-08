@@ -4,6 +4,7 @@ import LogIn from "./pages/LogIn";
 import SignUp from "./pages/SignUp";
 import Layout from "./components/Layout";
 import ProductList from "./pages/ProductList";
+import SellerForm from "./pages/SellerForm";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
           <Route index element={<ProductList />} />
           <Route path="/login" element={<LogIn />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/start-selling" element={<SellerForm />} />
         </Route>
       </Routes>
     </BrowserRouter>
