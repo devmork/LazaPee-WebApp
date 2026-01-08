@@ -14,10 +14,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { Avatar, AvatarFallback } from "@radix-ui/react-avatar";
 import { Search, ShoppingCart, User } from "lucide-react";
 import { Input } from "./ui/input";
 import { InputGroup, InputGroupAddon } from "./ui/input-group";
+import { Avatar, AvatarFallback } from "./ui/avatar";
 
 function Layout() {
   const navigate = useNavigate();
