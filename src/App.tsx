@@ -12,29 +12,21 @@ import SellerProfileEdit from "./pages/SellerProfileEdit";
 
 function App() {
   return (
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Layout />}>
-            <Route index element={<ProductList />} />
-            <Route path="/login" element={<LogIn />} />
-            <Route path="/signup" element={<SignUp />} />
-            <Route path="/start-selling" element={<SellerForm />} />
-            <Route path="/seller/dashboard" element={<SellerDashboard />} />
-            <Route path="seller/profile/edit" element={<SellerProfileEdit />} />
-            <Route path="seller/products/new" element={<AddProduct />} />
-          </Route>
-        </Routes>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route index element={<ProductList />} />
+          <Route path="/login" element={<LogIn />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/start-selling" element={<SellerForm />} />
+          <Route path="/seller/dashboard" element={<SellerDashboard />} />
+          <Route path="seller/profile/edit" element={<SellerProfileEdit />} />
+          <Route path="seller/products/new" element={<AddProduct />} />
+        </Route>
+      </Routes>
 
-
-      {/* ← Add the Toaster here, outside Routes but inside BrowserRouter */}
-      <Toaster
-        richColors
-        closeButton
-        position="top-center"
-        duration={8000}
-      />
-
-      </BrowserRouter>
+      <Toaster richColors closeButton position="top-center" duration={8000} />
+    </BrowserRouter>
   );
 }
 
