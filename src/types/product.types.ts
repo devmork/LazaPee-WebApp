@@ -1,4 +1,8 @@
 export interface Product {
+    productId: number;
+    id: number;
+    sellerId: number;
+    categoryId: number;
     name: string;
     price: number;
     status: number;
