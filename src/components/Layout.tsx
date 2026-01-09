@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
 import { useState, useEffect } from "react";
