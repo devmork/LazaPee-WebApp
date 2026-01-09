@@ -1,123 +1,87 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
-import { createProduct } from "@/services/productService";
+import { createProduct } from '@/services/productService';
 
-// Flexible payload interface
-interface ProductPayload {
-  [key: string]: any;
-}
+// Import your real type
+import type { CreateProduct } from '@/types/product.types';
 
 export default function AddProduct() {
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
-    name: "",
-    brand: "",
-    price: "",
-    description: "",
-    weight: "",
-    width: "",
-    height: "",
-    length: "",
+    name: '',
+    brand: '',
+    price: '',
+    categoryId: '1', // default - change to a real category ID from your backend
+    description: '',
+    weight: '',
+    width: '',
+    height: '',
+    length: '',
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    setForm(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
-    // Basic validation
-    if (!form.name.trim()) {
-      setError("Product name is required");
-      return;
-    }
-    if (!form.brand.trim()) {
-      setError("Brand is required");
-      return;
-    }
+    // Required fields validation
+    if (!form.name.trim()) return setError('Product name is required');
+    if (!form.brand.trim()) return setError('Brand is required');
 
-    const priceNum = Number(form.price.trim().replace(',', '.'));
-    if (!form.price.trim() || isNaN(priceNum) || priceNum <= 0) {
-      setError("Please enter a valid positive price");
-      return;
-    }
+    const price = Number(form.price.trim().replace(',', '.'));
+    if (isNaN(price) || price <= 0) return setError('Enter a valid positive price');
+
+    const categoryId = Number(form.categoryId);
+    if (isNaN(categoryId)) return setError('Category ID must be a number');
 
     setIsSubmitting(true);
 
-    const payload: ProductPayload = {
+    // Build payload using EXACT CreateProduct type
+    const payload: CreateProduct = {
       name: form.name.trim(),
-      productName: form.name.trim(),
-      title: form.name.trim(),
       brand: form.brand.trim(),
-      price: priceNum,
+      price,
+      categoryId, // number, as per your interface
       description: form.description.trim() || undefined,
-      categoryId: "1",
-
-      // Dimensions
       weight: form.weight ? Number(form.weight) : undefined,
       width: form.width ? Number(form.width) : undefined,
       height: form.height ? Number(form.height) : undefined,
       length: form.length ? Number(form.length) : undefined,
-      dimensions: {
-        width: form.width ? Number(form.width) : undefined,
-        height: form.height ? Number(form.height) : undefined,
-        length: form.length ? Number(form.length) : undefined,
-      },
     };
-
-    // Remove undefined values (many backends dislike them)
-    Object.keys(payload).forEach(
-      (key) => payload[key] === undefined && delete payload[key]
-    );
 
     try {
       await createProduct(payload);
-      alert("Product added successfully! ✓");
-      navigate("/seller/dashboard");
+      alert('Product added successfully!');
+      navigate('/seller/dashboard');
     } catch (err: any) {
-      console.error("Create product failed:", err);
+      console.error('Add product error:', err);
 
-      let errorMsg = "Failed to add product";
+      let msg = 'Failed to add product';
 
-      if (err.response?.data) {
-        const data = err.response.data;
-
-        if (data.errors && typeof data.errors === "object") {
-          const messages = Object.entries(data.errors)
-            .map(([field, msg]) => {
-              const text = Array.isArray(msg) ? msg.join(", ") : String(msg);
-              return `${field}: ${text}`;
-            })
-            .join("\n • ");
-          errorMsg = messages || data.title || errorMsg;
-        } else if (data.message) {
-          errorMsg = data.message;
-        } else if (data.title || data.detail) {
-          errorMsg = [data.title, data.detail].filter(Boolean).join(" - ");
-        } else {
-          errorMsg = JSON.stringify(data, null, 2).slice(0, 400) + "...";
+     if (err?.response?.data?.errors) {
+            msg = "Validation error - please check all required fields.";
+        } else if (err?.response?.data?.message) {
+        msg = err.response.data.message;
+        } else if (err.message) {
+        msg = err.message;
         }
-      } else if (err.message) {
-        errorMsg = err.message;
-      }
 
-      setError(errorMsg);
+      setError(msg);
     } finally {
       setIsSubmitting(false);
     }
@@ -132,20 +96,22 @@ export default function AddProduct() {
 
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Name & Brand */}
-            <div className="grid grid-cols-2 gap-6">
-              <div>
-                <Label>Product Name *</Label>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <Label htmlFor="name">Product Name *</Label>
                 <Input
+                  id="name"
                   name="name"
                   value={form.name}
                   onChange={handleChange}
                   required
                 />
               </div>
-              <div>
-                <Label>Brand *</Label>
+
+              <div className="space-y-2">
+                <Label htmlFor="brand">Brand *</Label>
                 <Input
+                  id="brand"
                   name="brand"
                   value={form.brand}
                   onChange={handleChange}
@@ -154,23 +120,38 @@ export default function AddProduct() {
               </div>
             </div>
 
-            {/* Price */}
-            <div className="max-w-xs">
-              <Label>Price *</Label>
-              <Input
-                name="price"
-                type="text"
-                value={form.price}
-                onChange={handleChange}
-                placeholder="132.50"
-                required
-              />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <Label htmlFor="price">Price *</Label>
+                <Input
+                  id="price"
+                  name="price"
+                  type="text"
+                  value={form.price}
+                  onChange={handleChange}
+                  placeholder="29.99"
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="categoryId">Category ID *</Label>
+                <Input
+                  id="categoryId"
+                  name="categoryId"
+                  type="number"
+                  value={form.categoryId}
+                  onChange={handleChange}
+                  placeholder="1"
+                  required
+                />
+              </div>
             </div>
 
-            {/* Description */}
-            <div>
-              <Label>Description</Label>
+            <div className="space-y-2">
+              <Label htmlFor="description">Description (optional)</Label>
               <Textarea
+                id="description"
                 name="description"
                 value={form.description}
                 onChange={handleChange}
@@ -178,13 +159,12 @@ export default function AddProduct() {
               />
             </div>
 
-            {/* Dimensions */}
-            <div>
-              <Label>Shipping Dimensions (optional - cm/kg)</Label>
-              <div className="grid grid-cols-4 gap-4 mt-2">
+            <div className="space-y-2">
+              <Label>Dimensions (optional - cm/kg)</Label>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 <Input
                   name="weight"
-                  placeholder="Weight kg"
+                  placeholder="Weight (kg)"
                   value={form.weight}
                   onChange={handleChange}
                   type="number"
@@ -192,21 +172,21 @@ export default function AddProduct() {
                 />
                 <Input
                   name="width"
-                  placeholder="Width cm"
+                  placeholder="Width (cm)"
                   value={form.width}
                   onChange={handleChange}
                   type="number"
                 />
                 <Input
                   name="height"
-                  placeholder="Height cm"
+                  placeholder="Height (cm)"
                   value={form.height}
                   onChange={handleChange}
                   type="number"
                 />
                 <Input
                   name="length"
-                  placeholder="Length cm"
+                  placeholder="Length (cm)"
                   value={form.length}
                   onChange={handleChange}
                   type="number"
@@ -214,11 +194,9 @@ export default function AddProduct() {
               </div>
             </div>
 
-            {/* Error display */}
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-800 p-4 rounded-md whitespace-pre-wrap font-mono text-sm">
-                <strong>Error:</strong>
-                <div className="mt-1">{error}</div>
+              <div className="bg-red-50 border border-red-200 text-red-800 p-4 rounded-md">
+                {error}
               </div>
             )}
 
@@ -226,13 +204,14 @@ export default function AddProduct() {
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => navigate("/seller/dashboard")}
+                onClick={() => navigate('/seller/dashboard')}
                 disabled={isSubmitting}
               >
                 Cancel
               </Button>
+
               <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? "Creating..." : "Create Product"}
+                {isSubmitting ? 'Creating...' : 'Add Product'}
               </Button>
             </div>
           </form>
