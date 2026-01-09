@@ -1,5 +1,6 @@
 import axios from "axios";
 import type { Product } from "../types/product.types";
+import type { CreateProduct, UpdateProduct } from "@/types/selling.types";
 
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || "https://localhost:7260/api";
@@ -36,14 +37,16 @@ export const getSellerProducts = async (
   return response.data;
 };
 
-export const createProduct = async (productData: any): Promise<Product> => {
+export const createProduct = async (
+  productData: CreateProduct
+): Promise<Product> => {
   const response = await api.post<Product>("/Product", productData);
   return response.data;
 };
 
 export const updateProduct = async (
   id: number,
-  productData: any
+  productData: UpdateProduct
 ): Promise<Product> => {
   const response = await api.put<Product>(`/Product/${id}`, productData);
   return response.data;
