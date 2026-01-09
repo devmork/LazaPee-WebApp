@@ -42,7 +42,7 @@ export default function SellerDashboard() {
     fetchProfile();
   }, []);
 
-// Loading State
+  // Loading State
   if (loading) {
     return (
       <div className="container max-w-6xl mx-auto py-12 px-6 space-y-12">
@@ -71,7 +71,7 @@ export default function SellerDashboard() {
     <div className="container max-w-6xl mx-auto py-12 px-6 space-y-12">
       {/* Store Profile Section */}
       <Card className="overflow-hidden border-0 shadow-lg">
-        <CardHeader className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-950/30 dark:to-pink-950/30 pb-8">
+        <CardHeader className="bg-linear-to-br from-purple-50 to-pink-50 dark:from-purple-950/30 dark:to-pink-950/30 pb-8">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
             <div className="flex items-center gap-5">
               <div className="rounded-full bg-white dark:bg-gray-800 p-4 shadow-md">
@@ -92,8 +92,7 @@ export default function SellerDashboard() {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => navigate("/seller/profile/edit")}
-            >
+              onClick={() => navigate("/seller/profile/edit")}>
               <Edit2 className="w-4 h-4 mr-2" />
               Edit Profile
             </Button>
@@ -104,7 +103,8 @@ export default function SellerDashboard() {
           <CardDescription className="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
             {seller.storeDescription || (
               <span className="italic">
-                No description yet. Add one to tell customers what makes your shop special!
+                No description yet. Add one to tell customers what makes your
+                shop special!
               </span>
             )}
           </CardDescription>
@@ -123,10 +123,7 @@ export default function SellerDashboard() {
             </p>
           </div>
 
-          <Button
-            size="lg"
-            onClick={() => navigate("/seller/products/new")}
-          >
+          <Button size="lg" onClick={() => navigate("/seller/products/new")}>
             <Plus className="w-5 h-5 mr-2" />
             Add New Product
           </Button>
@@ -141,7 +138,8 @@ export default function SellerDashboard() {
               </div>
               <CardTitle className="text-2xl">No products yet</CardTitle>
               <CardDescription className="mt-4 text-base leading-relaxed">
-                Your store is ready! Start adding products to reach customers and grow your business.
+                Your store is ready! Start adding products to reach customers
+                and grow your business.
               </CardDescription>
               <Badge variant="secondary" className="mt-4">
                 Get started in minutes
@@ -151,8 +149,7 @@ export default function SellerDashboard() {
             <CardFooter className="flex justify-center">
               <Button
                 size="lg"
-                onClick={() => navigate("/seller/products/new")}
-              >
+                onClick={() => navigate("/seller/products/new")}>
                 <Plus className="w-5 h-5 mr-2" />
                 Add Your First Product
               </Button>
