@@ -1,17 +1,17 @@
-import axios from 'axios';
+import axios from "axios";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://localhost:7260/api';
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "https://localhost:7260/api";
 
 const api = axios.create({
   baseURL: API_BASE_URL,
-  headers: { 'Content-Type': 'application/json' },
+  headers: { "Content-Type": "application/json" },
 });
 
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('auth_token');
+  const token = localStorage.getItem("auth_token");
   if (token) {
-    config.headers = config.headers || {};
-    (config.headers as any).Authorization = `Bearer ${token}`;
+    config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });
@@ -23,6 +23,6 @@ export const getProductInventory = async (productId: number) => {
 
 export const setProductStock = async (productId: number, quantity: number) => {
   const payload = { productId, quantityAvailable: quantity };
-  const response = await api.post('/Inventory', payload);
+  const response = await api.post("/Inventory", payload);
   return response.data;
 };

@@ -15,9 +15,10 @@ export interface createSeller {
   returnPolicy: string;
   city: string;
   country: string;
-  zipCode: number;
+  zipCode?: number;
   region: string;
   addressLine: string;
+  status?: string;
 }
 
 export interface UpdateSeller {
