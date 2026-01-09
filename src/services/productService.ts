@@ -30,9 +30,7 @@ export const getProductById = async (id: number): Promise<Product> => {
   return response.data;
 };
 
-export const getSellerProducts = async (
-  sellerId: number
-): Promise<Product[]> => {
+export const getSellerProducts = async (sellerId: number): Promise<Product[]> => {
   const response = await api.get<Product[]>(`/Product/seller/${sellerId}`);
   return response.data;
 };
