@@ -32,11 +32,11 @@ function SellerForm() {
       await createSellerProfile({
         ...formData,
         zipCode: formData.zipCode ? Number(formData.zipCode) : undefined,
-        status: "Active", // or "Pending", whatever your backend expects
+        status: "Active",
     });
       alert("Seller profile created successfully!\nPlease log out and log back in to access your seller dashboard and features.");
-      localStorage.removeItem("auth_token");
-      navigate("/");
+      localStorage.removeItem("auth_token"); //force logout
+      navigate("/login");
     } catch (err) {
       let errorMessage = "Failed to create seller profile. Please try again.";
 
