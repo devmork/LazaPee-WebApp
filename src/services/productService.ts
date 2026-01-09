@@ -30,8 +30,13 @@ export const getProductById = async (id: number): Promise<Product> => {
 };
 
 export const getSellerProducts = async (sellerId: number): Promise<Product[]> => {
-  const response = await api.get<Product[]>(`/Product/seller/${sellerId}`);
-  return response.data;
+  try {
+    const response = await api.get(`/api/Product/seller/${sellerId}`);  // ← exact path from your docs
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching seller products:", error);
+    throw error;
+  }
 };
 
 export const createProduct = async (productData: any): Promise<Product> => {

@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,83 +9,117 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { createProduct } from "@/services/productService";
 
-// We will send this data to the backend
-interface NewProduct {
-  name: string;
-  brand: string;
-  price: number;
-  description?: string;
-  imageUrl?: string; // optional
-  weight?: number;
-  width?: number;
-  height?: number;
-  length?: number;
+// Flexible payload interface
+interface ProductPayload {
+  [key: string]: any;
 }
 
 export default function AddProduct() {
-  const navigate = useNavigate(); // helps go back to dashboard
+  const navigate = useNavigate();
 
-  // These are the form fields (like variables that change when user types)
-  const [name, setName] = useState("");
-  const [brand, setBrand] = useState("");
-  const [price, setPrice] = useState("");
-  const [description, setDescription] = useState("");
-  const [weight, setWeight] = useState("");
-  const [width, setWidth] = useState("");
-  const [height, setHeight] = useState("");
-  const [length, setLength] = useState("");
+  const [form, setForm] = useState({
+    name: "",
+    brand: "",
+    price: "",
+    description: "",
+    weight: "",
+    width: "",
+    height: "",
+    length: "",
+  });
 
-  const [imagePreview, setImagePreview] = useState<string | null>(null); // shows image preview
-  const [isLoading, setIsLoading] = useState(false); // shows "Adding..." when submitting
-  const [errorMessage, setErrorMessage] = useState(""); // shows error if something goes wrong
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  // When user picks an image
-  const handleImagePick = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]; // get the selected file
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setImagePreview(reader.result as string); // show preview
-      };
-      reader.readAsDataURL(file); // convert image to text so we can show it
-    }
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  // When user clicks "Add Product"
-  const handleFormSubmit = async (event: React.FormEvent) => {
-    event.preventDefault(); // stop page from refreshing
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
 
-    // Check if required fields are filled
-    if (name === "" || brand === "" || price === "") {
-      setErrorMessage("Please fill Name, Brand, and Price.");
+    // Basic validation
+    if (!form.name.trim()) {
+      setError("Product name is required");
+      return;
+    }
+    if (!form.brand.trim()) {
+      setError("Brand is required");
       return;
     }
 
-    setIsLoading(true); // show loading
-    setErrorMessage(""); // clear old errors
+    const priceNum = Number(form.price.trim().replace(',', '.'));
+    if (!form.price.trim() || isNaN(priceNum) || priceNum <= 0) {
+      setError("Please enter a valid positive price");
+      return;
+    }
 
-    // Create the product data to send
-    const newProduct: NewProduct = {
-      name: name,
-      brand: brand,
-      price: Number(price), // convert string to number
-      description: description || undefined,
-      imageUrl: imagePreview || undefined,
-      weight: weight ? Number(weight) : undefined,
-      width: width ? Number(width) : undefined,
-      height: height ? Number(height) : undefined,
-      length: length ? Number(length) : undefined,
+    setIsSubmitting(true);
+
+    const payload: ProductPayload = {
+      name: form.name.trim(),
+      productName: form.name.trim(),
+      title: form.name.trim(),
+      brand: form.brand.trim(),
+      price: priceNum,
+      description: form.description.trim() || undefined,
+      categoryId: "1",
+
+      // Dimensions
+      weight: form.weight ? Number(form.weight) : undefined,
+      width: form.width ? Number(form.width) : undefined,
+      height: form.height ? Number(form.height) : undefined,
+      length: form.length ? Number(form.length) : undefined,
+      dimensions: {
+        width: form.width ? Number(form.width) : undefined,
+        height: form.height ? Number(form.height) : undefined,
+        length: form.length ? Number(form.length) : undefined,
+      },
     };
 
+    // Remove undefined values (many backends dislike them)
+    Object.keys(payload).forEach(
+      (key) => payload[key] === undefined && delete payload[key]
+    );
+
     try {
-      await createProduct(newProduct); // send to backend
-      alert("Product added successfully! 🎉");
-      navigate("/seller/dashboard"); // go back to dashboard
-    } catch (error) {
-      setErrorMessage("Something went wrong. Please try again.");
-      console.log(error);
+      await createProduct(payload);
+      alert("Product added successfully! ✓");
+      navigate("/seller/dashboard");
+    } catch (err: any) {
+      console.error("Create product failed:", err);
+
+      let errorMsg = "Failed to add product";
+
+      if (err.response?.data) {
+        const data = err.response.data;
+
+        if (data.errors && typeof data.errors === "object") {
+          const messages = Object.entries(data.errors)
+            .map(([field, msg]) => {
+              const text = Array.isArray(msg) ? msg.join(", ") : String(msg);
+              return `${field}: ${text}`;
+            })
+            .join("\n • ");
+          errorMsg = messages || data.title || errorMsg;
+        } else if (data.message) {
+          errorMsg = data.message;
+        } else if (data.title || data.detail) {
+          errorMsg = [data.title, data.detail].filter(Boolean).join(" - ");
+        } else {
+          errorMsg = JSON.stringify(data, null, 2).slice(0, 400) + "...";
+        }
+      } else if (err.message) {
+        errorMsg = err.message;
+      }
+
+      setError(errorMsg);
     } finally {
-      setIsLoading(false); // stop loading
+      setIsSubmitting(false);
     }
   };
 
@@ -94,71 +128,111 @@ export default function AddProduct() {
       <Card>
         <CardHeader>
           <CardTitle className="text-3xl">Add New Product</CardTitle>
-          <p className="text-gray-600">Fill the form to add a product to your store.</p>
         </CardHeader>
 
         <CardContent>
-          <form onSubmit={handleFormSubmit} className="space-y-8">
-            {/* Name and Brand */}
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Name & Brand */}
             <div className="grid grid-cols-2 gap-6">
               <div>
-                <Label>Name *</Label>
-                <Input value={name} onChange={(e) => setName(e.target.value)}/>
+                <Label>Product Name *</Label>
+                <Input
+                  name="name"
+                  value={form.name}
+                  onChange={handleChange}
+                  required
+                />
               </div>
               <div>
                 <Label>Brand *</Label>
-                <Input value={brand} onChange={(e) => setBrand(e.target.value)} />
+                <Input
+                  name="brand"
+                  value={form.brand}
+                  onChange={handleChange}
+                  required
+                />
               </div>
             </div>
 
             {/* Price */}
-            <div className="w-64">
+            <div className="max-w-xs">
               <Label>Price *</Label>
               <Input
-                type="number"
-                step="0.01"
-                value={price}
-                onChange={(e) => setPrice(e.target.value)}
-                placeholder="29.99"
+                name="price"
+                type="text"
+                value={form.price}
+                onChange={handleChange}
+                placeholder="132.50"
+                required
               />
             </div>
 
             {/* Description */}
             <div>
-              <Label>Description (optional)</Label>
+              <Label>Description</Label>
               <Textarea
+                name="description"
+                value={form.description}
+                onChange={handleChange}
                 rows={4}
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Tell customers why this product is great..."
               />
             </div>
 
             {/* Dimensions */}
             <div>
-              <Label>Dimensions (optional - in cm/kg)</Label>
-              <div className="grid grid-cols-4 gap-4 mt-3">
-                <Input placeholder="Weight (kg)" value={weight} onChange={(e) => setWeight(e.target.value)} />
-                <Input placeholder="Width" value={width} onChange={(e) => setWidth(e.target.value)} />
-                <Input placeholder="Height" value={height} onChange={(e) => setHeight(e.target.value)} />
-                <Input placeholder="Length" value={length} onChange={(e) => setLength(e.target.value)} />
+              <Label>Shipping Dimensions (optional - cm/kg)</Label>
+              <div className="grid grid-cols-4 gap-4 mt-2">
+                <Input
+                  name="weight"
+                  placeholder="Weight kg"
+                  value={form.weight}
+                  onChange={handleChange}
+                  type="number"
+                  step="0.01"
+                />
+                <Input
+                  name="width"
+                  placeholder="Width cm"
+                  value={form.width}
+                  onChange={handleChange}
+                  type="number"
+                />
+                <Input
+                  name="height"
+                  placeholder="Height cm"
+                  value={form.height}
+                  onChange={handleChange}
+                  type="number"
+                />
+                <Input
+                  name="length"
+                  placeholder="Length cm"
+                  value={form.length}
+                  onChange={handleChange}
+                  type="number"
+                />
               </div>
             </div>
 
-            {/* Error Message */}
-            {errorMessage && (
-              <div className="bg-red-100 text-red-700 p-4 rounded-lg flex items-center gap-2">
-                <p>⚠️ {errorMessage}</p>
+            {/* Error display */}
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-800 p-4 rounded-md whitespace-pre-wrap font-mono text-sm">
+                <strong>Error:</strong>
+                <div className="mt-1">{error}</div>
               </div>
             )}
 
-            {/* Buttons */}
             <div className="flex justify-end gap-4">
-              <Button type="button" variant="outline" onClick={() => navigate("/seller/dashboard")}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => navigate("/seller/dashboard")}
+                disabled={isSubmitting}
+              >
                 Cancel
               </Button>
-              <Button type="submit" disabled={isLoading}>
-                {isLoading ? "Adding Product..." : "Add Product"}
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? "Creating..." : "Create Product"}
               </Button>
             </div>
           </form>
