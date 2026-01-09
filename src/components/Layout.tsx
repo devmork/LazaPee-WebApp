@@ -17,7 +17,6 @@ import {
 } from "./ui/dropdown-menu";
 import { Search, ShoppingCart, User, Store } from "lucide-react"; // ← Added Store icon
 import { Input } from "./ui/input";
-import { InputGroup, InputGroupAddon } from "./ui/input-group";
 import { Avatar, AvatarFallback } from "./ui/avatar";
 import { ShoppingBag } from 'lucide-react';
 
