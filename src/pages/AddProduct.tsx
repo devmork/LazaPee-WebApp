@@ -11,7 +11,6 @@ import { createProduct } from "@/services/productService";
 
 // We will send this data to the backend
 interface NewProduct {
-  categoryId: number;
   name: string;
   brand: string;
   price: number;
@@ -66,9 +65,7 @@ export default function AddProduct() {
     setErrorMessage(""); // clear old errors
 
     // Create the product data to send
-    // NOTE: backend requires `categoryId` in CreateProduct — use default 1 for now.
     const newProduct: NewProduct = {
-      categoryId: 1,
       name: name,
       brand: brand,
       price: Number(price), // convert string to number
@@ -84,14 +81,9 @@ export default function AddProduct() {
       await createProduct(newProduct); // send to backend
       alert("Product added successfully! 🎉");
       navigate("/seller/dashboard"); // go back to dashboard
-    } catch (error: any) {
-      console.error("Create product failed:", error);
-      const serverMessage = error?.response?.data?.message || error?.response?.data || error?.message;
-      setErrorMessage(
-        typeof serverMessage === "string"
-          ? serverMessage
-          : JSON.stringify(serverMessage)
-      );
+    } catch (error) {
+      setErrorMessage("Something went wrong. Please try again.");
+      console.log(error);
     } finally {
       setIsLoading(false); // stop loading
     }
@@ -107,38 +99,6 @@ export default function AddProduct() {
 
         <CardContent>
           <form onSubmit={handleFormSubmit} className="space-y-8">
-
-            {/* Image Upload */}
-            <div className="space-y-4">
-              <Label>Product Image (optional)</Label>
-              <div className="flex gap-8 items-center">
-                {/* Upload Box */}
-                <div className="border-2 border-dashed border-gray-400 rounded-lg p-10 text-center w-64">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImagePick}
-                    className="hidden"
-                    id="image-upload"
-                  />
-                  <label htmlFor="image-upload" className="cursor-pointer">
-                    <p className="text-5xl">📦</p>
-                    <p className="mt-4 font-medium">Click to upload</p>
-                    <p className="text-sm text-gray-500">PNG or JPG</p>
-                  </label>
-                </div>
-
-                {/* Preview */}
-                {imagePreview && (
-                  <img
-                    src={imagePreview}
-                    alt="Product preview"
-                    className="w-64 h-64 object-cover rounded-lg shadow-lg"
-                  />
-                )}
-              </div>
-            </div>
-
             {/* Name and Brand */}
             <div className="grid grid-cols-2 gap-6">
               <div>
