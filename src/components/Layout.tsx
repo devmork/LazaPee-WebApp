@@ -18,7 +18,7 @@ import {
 import { Search, ShoppingCart, User, Store } from "lucide-react"; // ← Added Store icon
 import { Input } from "./ui/input";
 import { Avatar, AvatarFallback } from "./ui/avatar";
-import { ShoppingBag } from 'lucide-react';
+import { ShoppingBag } from "lucide-react";
 
 function Layout() {
   const navigate = useNavigate();
@@ -62,18 +62,18 @@ function Layout() {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
-      <header className="w-full bg-gradient-to-r from-orange-500 via-pink-500 via-purple-600 to-blue-600 text-white">
+      <header className="w-full bg-linear-to-r from-orange-500 via-pink-500 to-blue-600 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between gap-4">
             {/* Logo */}
             <Link
               to="/"
               className="text-3xl font-bold hover:opacity-90 transition whitespace-nowrap flex items-center gap-3">
-                <ShoppingBag className="h-12 w-12 text-white drop-shadow-xl" />
-                <span className="text-white">LazaPee</span>
+              <ShoppingBag className="h-12 w-12 text-white drop-shadow-xl" />
+              <span className="text-white">LazaPee</span>
             </Link>
 
-           {/* Search Bar */}
+            {/* Search Bar */}
             <form onSubmit={handleSearch} className="flex-1 max-w-2xl">
               <div className="relative">
                 <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-white/70 pointer-events-none z-10" />
@@ -150,8 +150,7 @@ function Layout() {
                           <DropdownMenuSeparator />
                           <DropdownMenuItem
                             onClick={() => navigate("/seller/dashboard")}
-                            className="font-medium text-purple-600"
-                          >
+                            className="font-medium text-purple-600">
                             <Store className="mr-2 h-4 w-4" />
                             <span>Seller Dashboard</span>
                           </DropdownMenuItem>
