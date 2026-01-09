@@ -1,11 +1,12 @@
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   getCurrentUser,
   isAuthenticated,
   logOut,
 } from "@/services/authService";
+import { getSellerProfile } from "@/services/sellerService";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,7 +15,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { Search, ShoppingCart, User } from "lucide-react";
+import { Search, ShoppingCart, User, Store } from "lucide-react"; // ← Added Store icon
 import { Input } from "./ui/input";
 import { InputGroup, InputGroupAddon } from "./ui/input-group";
 import { Avatar, AvatarFallback } from "./ui/avatar";
@@ -23,8 +24,27 @@ import { ShoppingBag } from 'lucide-react';
 function Layout() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
+  const [isSeller, setIsSeller] = useState(false); // ← New state to track seller status
   const authenticated = isAuthenticated();
   const currentUser = getCurrentUser();
+
+  // Check if user has a seller profile on mount (only if authenticated)
+  useEffect(() => {
+    const checkSellerStatus = async () => {
+      if (authenticated) {
+        try {
+          await getSellerProfile(); // This succeeds only if seller profile exists
+          setIsSeller(true);
+        } catch (err) {
+          setIsSeller(false); // No seller profile or error
+        }
+      } else {
+        setIsSeller(false);
+      }
+    };
+
+    checkSellerStatus();
+  }, [authenticated]);
 
   const handleLogout = () => {
     logOut();
@@ -125,6 +145,19 @@ function Layout() {
                         <ShoppingCart className="mr-2 h-4 w-4" />
                         <span>My Orders</span>
                       </DropdownMenuItem>
+                      {/* Seller Dashboard Link — Only shows if user is a seller */}
+                      {isSeller && (
+                        <>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem
+                            onClick={() => navigate("/seller/dashboard")}
+                            className="font-medium text-purple-600"
+                          >
+                            <Store className="mr-2 h-4 w-4" />
+                            <span>Seller Dashboard</span>
+                          </DropdownMenuItem>
+                        </>
+                      )}
                       <DropdownMenuSeparator />
                       <DropdownMenuItem onClick={handleLogout}>
                         <span className="text-red-600">Log Out</span>

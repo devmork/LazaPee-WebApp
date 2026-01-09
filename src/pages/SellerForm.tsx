@@ -6,6 +6,7 @@ import { createSellerProfile } from "@/services/sellerService";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios"; // Import axios to check for AxiosError
+import { toast } from "sonner";
 
 function SellerForm() {
   const [formData, setFormData] = useState({
@@ -34,9 +35,21 @@ function SellerForm() {
         zipCode: formData.zipCode ? Number(formData.zipCode) : undefined,
         status: "Active",
     });
-      alert("Seller profile created successfully!\nPlease log out and log back in to access your seller dashboard and features.");
-      localStorage.removeItem("auth_token"); //force logout
-      navigate("/login");
+    // Beautiful success toast with optional logout action
+        toast.success("Seller profile created successfully! 🎉", {
+        description: "Your store is ready. To access seller features (like adding products), please log out and log back in.",
+        duration: 12000,
+        action: {
+            label: "Log out now",
+                onClick: () => {
+                    localStorage.removeItem("auth_token");
+        navigate("/login");
+            },
+                },
+    });
+
+    // Let them see their beautiful new dashboard right away!
+        navigate("/seller/my-seller-profile");
     } catch (err) {
       let errorMessage = "Failed to create seller profile. Please try again.";
 
