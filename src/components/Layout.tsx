@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
 import { useState, useEffect } from "react";
@@ -15,7 +16,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { Search, ShoppingCart, User, Store } from "lucide-react"; // ← Added Store icon
+import { Search, ShoppingCart, User, Store } from "lucide-react";
 import { Input } from "./ui/input";
 import { Avatar, AvatarFallback } from "./ui/avatar";
 import { ShoppingBag } from "lucide-react";
@@ -23,19 +24,18 @@ import { ShoppingBag } from "lucide-react";
 function Layout() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
-  const [isSeller, setIsSeller] = useState(false); // ← New state to track seller status
+  const [isSeller, setIsSeller] = useState(false);
   const authenticated = isAuthenticated();
   const currentUser = getCurrentUser();
 
-  // Check if user has a seller profile on mount (only if authenticated)
   useEffect(() => {
     const checkSellerStatus = async () => {
       if (authenticated) {
         try {
-          await getSellerProfile(); // This succeeds only if seller profile exists
+          await getSellerProfile();
           setIsSeller(true);
         } catch (err) {
-          setIsSeller(false); // No seller profile or error
+          setIsSeller(false);
         }
       } else {
         setIsSeller(false);
