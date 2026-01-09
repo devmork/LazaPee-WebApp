@@ -6,6 +6,7 @@ import Layout from "./components/Layout";
 import ProductList from "./pages/ProductList";
 import SellerForm from "./pages/SellerForm";
 import SellerDashboard from "./pages/SellerDashboard";
+import AddProduct from "./pages/AddProduct";
 import { Toaster } from "@/components/ui/sonner";
 import SellerProfileEdit from "./pages/SellerProfileEdit";
 
@@ -20,6 +21,7 @@ function App() {
             <Route path="/start-selling" element={<SellerForm />} />
             <Route path="/seller/dashboard" element={<SellerDashboard />} />
             <Route path="seller/profile/edit" element={<SellerProfileEdit />} />
+            <Route path="seller/products/new" element={<AddProduct />} />
           </Route>
         </Routes>
 
