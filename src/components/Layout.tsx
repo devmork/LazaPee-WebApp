@@ -18,6 +18,7 @@ import { Search, ShoppingCart, User } from "lucide-react";
 import { Input } from "./ui/input";
 import { InputGroup, InputGroupAddon } from "./ui/input-group";
 import { Avatar, AvatarFallback } from "./ui/avatar";
+import { ShoppingBag } from 'lucide-react';
 
 function Layout() {
   const navigate = useNavigate();
@@ -41,36 +42,30 @@ function Layout() {
   };
 
   return (
-    <div className="max-h-screen flex flex-col bg-gray-50">
-      <header className="bg-blue-600 text-white shadow-md">
-        <div className="container mx-auto px-4 py-4">
+    <div className="flex flex-col min-h-screen bg-gray-50">
+      <header className="w-full bg-gradient-to-r from-orange-500 via-pink-500 via-purple-600 to-blue-600 text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between gap-4">
             {/* Logo */}
             <Link
               to="/"
-              className="text-2xl font-bold hover:text-blue-100 transition whitespace-nowrap">
-              LazaPee
+              className="text-3xl font-bold hover:opacity-90 transition whitespace-nowrap flex items-center gap-3">
+                <ShoppingBag className="h-12 w-12 text-white drop-shadow-xl" />
+                <span className="text-white">LazaPee</span>
             </Link>
 
-            {/* Search Bar*/}
+           {/* Search Bar */}
             <form onSubmit={handleSearch} className="flex-1 max-w-2xl">
-              <InputGroup>
+              <div className="relative">
+                <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-white/70 pointer-events-none z-10" />
                 <Input
                   type="text"
                   placeholder="Search for products, brands and shops"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="text-gray-900"
+                  className="w-full h-12 pl-14 pr-6 bg-white/15 backdrop-blur-md border border-white/20 text-white placeholder:text-white/60 rounded-60 focus:ring-4 focus:ring-white/30 focus:border-white/40 transition-all duration-300"
                 />
-                <InputGroupAddon>
-                  <Button
-                    type="submit"
-                    size="icon"
-                    className="h-full bg-blue-700 hover:bg-blue-800">
-                    <Search className="h-4 w-4" />
-                  </Button>
-                </InputGroupAddon>
-              </InputGroup>
+              </div>
             </form>
 
             {/* Right side navigation */}
@@ -163,7 +158,7 @@ function Layout() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-gray-800 text-white text-center py-4">
+      <footer className="bg-gray-900 text-white text-center py-6 mt-auto">
         <p className="text-sm">LazaPee © 2025</p>
       </footer>
     </div>
