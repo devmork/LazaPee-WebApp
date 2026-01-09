@@ -7,6 +7,7 @@ import ProductList from "./pages/ProductList";
 import SellerForm from "./pages/SellerForm";
 import SellerDashboard from "./pages/SellerDashboard";
 import { Toaster } from "@/components/ui/sonner";
+import SellerProfileEdit from "./pages/SellerProfileEdit";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
             <Route path="/signup" element={<SignUp />} />
             <Route path="/start-selling" element={<SellerForm />} />
             <Route path="/seller/dashboard" element={<SellerDashboard />} />
+            <Route path="seller/profile/edit" element={<SellerProfileEdit />} />
           </Route>
         </Routes>
 
@@ -29,7 +31,7 @@ function App() {
         position="top-center"
         duration={8000}
       />
-      
+
       </BrowserRouter>
   );
 }
