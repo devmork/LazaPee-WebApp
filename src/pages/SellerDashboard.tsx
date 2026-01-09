@@ -21,9 +21,17 @@ import { Store, Package, Plus, Edit2 } from "lucide-react";
 
 import { getSellerProfile } from "@/services/sellerService";
 import type { Seller } from "@/types/selling.types";
+import { DeleteSellerModal } from "@/components/ui/delete-seller-modal";
+import { toast } from "sonner";
 
 export default function SellerDashboard() {
   const navigate = useNavigate();
+  const handleSellerDeleted = () => {
+    toast.success("Seller account deleted successfully.", {
+        description: "You can still use your account to shop. Create a new store anytime!",
+    });
+    navigate("/");
+};
   const [seller, setSeller] = useState<Seller | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -108,6 +116,13 @@ export default function SellerDashboard() {
               </span>
             )}
           </CardDescription>
+
+          <div className="pt-8 mt-8 border-t border-gray-200">
+            <p className="text-sm text-muted-foreground mb-4">
+                Want to stop selling? You can delete your seller account below.
+            </p>
+            <DeleteSellerModal onDeleted={handleSellerDeleted} />
+          </div>
         </CardContent>
       </Card>
 
